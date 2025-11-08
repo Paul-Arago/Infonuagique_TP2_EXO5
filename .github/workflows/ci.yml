@@ -1,0 +1,34 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies and test (Users)
+      run: |
+        cd users-service
+        npm install
+        npm test
+
+    - name: Install dependencies and test (Products)
+      run: |
+        cd products-service
+        npm install
+        npm test
+
+    - name: Build Docker images
+      run: |
+        docker build -t users-service:latest ./users-service
+        docker build -t products-service:latest ./products-service
